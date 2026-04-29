@@ -1,0 +1,581 @@
+import { useEffect, useRef, useState } from "react";
+import {
+  Brain, CheckCircle, Star, ArrowRight, Shield, Award, Zap,
+  TrendingUp, Clock, HeartPulse, Lightbulb, Users, ChevronDown
+} from "lucide-react";
+
+const AFFILIATE_URL =
+  "https://www.advancedbionutritionals.com/DS24/Advanced-Memory/Nobel-Prize-Winning-Memory-Breakthroughs/HD.htm#aff=zengift";
+
+function useInView(ref: React.RefObject<HTMLElement>, threshold = 0.15) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") { setInView(true); return; }
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  return inView;
+}
+
+function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref as React.RefObject<HTMLElement>);
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const duration = 1800;
+    const step = Math.ceil(target / (duration / 16));
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(start);
+    }, 16);
+    return () => clearInterval(timer);
+  }, [inView, target]);
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
+}
+
+const benefits = [
+  {
+    icon: Brain,
+    title: "Sharper Recall",
+    desc: "Retrieve names, dates, and memories with ease — the way your brain worked in your 30s and 40s.",
+  },
+  {
+    icon: Zap,
+    title: "Faster Mental Processing",
+    desc: "Think quicker, respond faster, and stay sharp during conversations, meetings, and daily tasks.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Laser-Like Focus",
+    desc: "Eliminate brain fog and distractions. Stay locked in on what matters most for hours at a time.",
+  },
+  {
+    icon: HeartPulse,
+    title: "Long-Term Brain Health",
+    desc: "Nourish and protect your neurons with clinically studied ingredients that support lasting cognitive vitality.",
+  },
+  {
+    icon: Clock,
+    title: "Faster Learning",
+    desc: "Absorb new information more efficiently — whether it's a new skill, hobby, or language.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Mood & Mental Energy",
+    desc: "Feel more positive, motivated, and mentally energized throughout the day without caffeine crashes.",
+  },
+];
+
+const ingredients = [
+  {
+    name: "Bacopa Monnieri",
+    role: "Ancient Memory Herb",
+    desc: "Used for centuries in Ayurvedic medicine. Clinical studies show it significantly improves memory formation and recall speed.",
+    color: "from-blue-500 to-blue-700",
+  },
+  {
+    name: "Lion's Mane Mushroom",
+    role: "Nerve Growth Factor Booster",
+    desc: "Stimulates production of Nerve Growth Factor (NGF), which helps grow and repair brain cells — a key to neuroplasticity.",
+    color: "from-purple-500 to-purple-700",
+  },
+  {
+    name: "Phosphatidylserine",
+    role: "Nobel Prize–Linked Nutrient",
+    desc: "A critical phospholipid that makes up 15% of your brain's fat. Supports neurotransmitter function and memory retrieval.",
+    color: "from-teal-500 to-teal-700",
+  },
+  {
+    name: "Ginkgo Biloba",
+    role: "Circulation Enhancer",
+    desc: "Increases blood flow to the brain, delivering more oxygen and nutrients to neurons for optimal cognitive performance.",
+    color: "from-amber-500 to-amber-700",
+  },
+];
+
+const testimonials = [
+  {
+    name: "Margaret T.",
+    age: 67,
+    location: "Phoenix, AZ",
+    avatar: "https://i.pravatar.cc/150?img=47",
+    stars: 5,
+    text: "I was forgetting my grandchildren's birthdays and losing my keys every day. After just 3 weeks on Advanced Memory, I feel like I'm 20 years younger. My husband noticed the difference before I did!",
+  },
+  {
+    name: "Robert H.",
+    age: 72,
+    location: "Tampa, FL",
+    avatar: "https://i.pravatar.cc/150?img=52",
+    stars: 5,
+    text: "My doctor was impressed at my last checkup. I'm reading faster, remembering more, and I haven't had a 'senior moment' in months. This stuff is the real deal — backed by real science.",
+  },
+  {
+    name: "Linda K.",
+    age: 64,
+    location: "Denver, CO",
+    avatar: "https://i.pravatar.cc/150?img=44",
+    stars: 5,
+    text: "I was skeptical at first, but the Nobel Prize research mentioned on the website convinced me to try it. Best decision I've made. My word recall is back and I feel mentally alive again.",
+  },
+  {
+    name: "James W.",
+    age: 69,
+    location: "Nashville, TN",
+    avatar: "https://i.pravatar.cc/150?img=60",
+    stars: 5,
+    text: "I'm a retired engineer and I need my mind sharp for crosswords, chess, and helping my grandkids with homework. Advanced Memory has given me that edge back. Highly recommend.",
+  },
+];
+
+const faqs = [
+  {
+    q: "What makes Advanced Memory different from other supplements?",
+    a: "Advanced Memory is formulated based on Nobel Prize–winning research into how the brain forms and retrieves memories. It combines clinically studied ingredients at therapeutic doses — not the trace amounts found in most supplements.",
+  },
+  {
+    q: "How soon will I notice results?",
+    a: "Many users report noticeable improvements in focus and mental clarity within the first 2–3 weeks. Full memory benefits typically develop over 60–90 days as the ingredients build up in your system.",
+  },
+  {
+    q: "Is it safe for seniors?",
+    a: "Yes. Advanced Memory is formulated with natural, well-researched ingredients and is manufactured in a GMP-certified facility. As always, consult your doctor if you're on medications.",
+  },
+  {
+    q: "Is there a money-back guarantee?",
+    a: "Yes — Advanced Bionutritionals offers a satisfaction guarantee. Visit the official product page for full details on their return policy.",
+  },
+];
+
+export default function Home() {
+  const heroRef = useRef<HTMLElement>(null);
+  const benefitsRef = useRef<HTMLElement>(null);
+  const scienceRef = useRef<HTMLElement>(null);
+  const testimonialsRef = useRef<HTMLElement>(null);
+  const ctaRef = useRef<HTMLElement>(null);
+  const benefitsInView = useInView(benefitsRef);
+  const scienceInView = useInView(scienceRef);
+  const testimonialsInView = useInView(testimonialsRef);
+  const ctaInView = useInView(ctaRef);
+
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  return (
+    <div className="overflow-x-hidden">
+      {/* HERO */}
+      <section
+        ref={heroRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900"
+        id="hero"
+      >
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1600&h=900&fit=crop"
+            alt="Brain science"
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-gray-900/70 to-gray-900/90" />
+        </div>
+
+        {/* Animated orbs */}
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+
+        <div className="relative max-w-5xl mx-auto px-6 text-center py-24">
+          <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs uppercase tracking-widest font-semibold px-4 py-2 rounded-full mb-8">
+            <Award size={14} />
+            Nobel Prize–Winning Research
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 tracking-tight">
+            Reclaim Your{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+              Sharp Memory
+            </span>{" "}
+            <br className="hidden md:block" />
+            at Any Age
+          </h1>
+
+          <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Backed by Nobel Prize–winning breakthroughs in neuroscience, <strong className="text-white">Advanced Memory</strong> helps you recall names, dates, and details with the clarity of someone decades younger.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <a
+              href={AFFILIATE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-8 py-4 rounded-full text-lg font-bold hover:shadow-2xl hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300"
+            >
+              Unlock Your Memory Now <ArrowRight size={20} />
+            </a>
+            <a
+              href="#science"
+              className="inline-flex items-center justify-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300"
+            >
+              See the Science
+            </a>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
+            {["✓ No Prescription Needed", "✓ 100% Natural Ingredients", "✓ Satisfaction Guaranteed", "✓ Ships Free"].map((item) => (
+              <span key={item} className="text-gray-300">{item}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 animate-bounce">
+          <ChevronDown size={28} />
+        </div>
+      </section>
+
+      {/* TRUST BAR */}
+      <section className="bg-blue-700 py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
+            {[
+              { value: 50000, suffix: "+", label: "Happy Customers" },
+              { value: 98, suffix: "%", label: "Satisfaction Rate" },
+              { value: 15, suffix: "+", label: "Years of Research" },
+              { value: 3, suffix: "x", label: "Nobel Prize Science" },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <div className="text-3xl md:text-4xl font-bold mb-1">
+                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                </div>
+                <div className="text-blue-200 text-sm font-medium">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PROBLEM SECTION */}
+      <section className="py-20 md:py-28 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-xs uppercase tracking-widest font-semibold text-blue-700 mb-4">Does This Sound Familiar?</p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Your Memory Isn't What It Used to Be
+              </h2>
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                Walking into a room and forgetting why. Struggling to recall a name mid-sentence. Losing your keys — again. These aren't just "senior moments." They're signs your brain needs support.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Forgetting names, dates, and appointments",
+                  "Struggling to focus or stay on task",
+                  "Feeling mentally foggy or slow",
+                  "Losing your train of thought mid-sentence",
+                  "Difficulty learning new things",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-gray-700">
+                    <CheckCircle className="text-red-400 mt-0.5 shrink-0" size={20} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=600&fit=crop"
+                alt="Senior struggling with memory"
+                className="w-full h-80 md:h-96 object-cover rounded-2xl shadow-2xl"
+              />
+              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-5 max-w-xs">
+                <div className="flex items-center gap-3 mb-2">
+                  <Brain className="text-blue-700" size={24} />
+                  <span className="font-bold text-gray-900">The Good News</span>
+                </div>
+                <p className="text-gray-600 text-sm">Memory decline is NOT inevitable. Science has found a way to reverse it.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS */}
+      <section
+        id="benefits"
+        ref={benefitsRef}
+        className="py-20 md:py-28 bg-white"
+      >
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-xs uppercase tracking-widest font-semibold text-blue-700 mb-4">What You'll Experience</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              6 Powerful Benefits for Your Brain
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Advanced Memory doesn't just target one aspect of cognition — it delivers comprehensive brain support from multiple angles.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {benefits.map((benefit, i) => {
+              const Icon = benefit.icon;
+              return (
+                <div
+                  key={benefit.title}
+                  className={`bg-gray-50 border border-gray-100 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${benefitsInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                  style={{ transitionDelay: `${i * 100}ms` }}
+                >
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-5">
+                    <Icon className="text-blue-700" size={24} />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{benefit.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="text-center mt-12">
+            <a
+              href={AFFILIATE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-blue-700 text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-blue-800 hover:shadow-xl transition-all duration-300"
+            >
+              Experience These Benefits <ArrowRight size={20} />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* SCIENCE SECTION */}
+      <section
+        id="science"
+        ref={scienceRef}
+        className="py-20 md:py-28 bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900 text-white"
+      >
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-xs uppercase tracking-widest font-semibold text-blue-400 mb-4">The Science Behind It</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              Nobel Prize–Winning Memory Breakthroughs
+            </h2>
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto leading-relaxed">
+              In 2000, the Nobel Prize in Physiology or Medicine was awarded for discoveries about how the brain forms long-term memories. Advanced Memory is formulated around these exact mechanisms — targeting the root cause of memory decline, not just symptoms.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+            {ingredients.map((ing, i) => (
+              <div
+                key={ing.name}
+                className={`bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 ${scienceInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                style={{ transitionDelay: `${i * 120}ms` }}
+              >
+                <div className={`inline-block bg-gradient-to-r ${ing.color} text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4`}>
+                  {ing.role}
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3">{ing.name}</h3>
+                <p className="text-gray-300 leading-relaxed">{ing.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-blue-600/20 border border-blue-500/30 rounded-2xl p-8 md:p-12 text-center">
+            <Award className="text-blue-400 mx-auto mb-4" size={48} />
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Formulated on Nobel Prize–Winning Science
+            </h3>
+            <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+              The 2000 Nobel Prize revealed that memory is not fixed — it's a dynamic process that can be enhanced and restored. Advanced Memory leverages this discovery with a precision-formulated blend that supports your brain's natural memory pathways.
+            </p>
+            <a
+              href={AFFILIATE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white text-blue-900 px-10 py-4 rounded-full text-lg font-bold hover:shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              Read the Full Breakthrough Story <ArrowRight size={20} />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section
+        id="testimonials"
+        ref={testimonialsRef}
+        className="py-20 md:py-28 bg-gray-50"
+      >
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-xs uppercase tracking-widest font-semibold text-blue-700 mb-4">Real People, Real Results</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Thousands Have Reclaimed Their Memory
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Don't just take our word for it. Here's what real customers are saying after using Advanced Memory.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {testimonials.map((t, i) => (
+              <div
+                key={t.name}
+                className={`bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 ${testimonialsInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                style={{ transitionDelay: `${i * 120}ms` }}
+              >
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: t.stars }).map((_, si) => (
+                    <Star key={si} className="text-amber-400 fill-amber-400" size={18} />
+                  ))}
+                </div>
+                <p className="text-gray-700 text-lg leading-relaxed mb-6 italic">"{t.text}"</p>
+                <div className="flex items-center gap-4">
+                  <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover" />
+                  <div>
+                    <div className="font-bold text-gray-900">{t.name}, {t.age}</div>
+                    <div className="text-gray-500 text-sm">{t.location}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="py-20 md:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-xs uppercase tracking-widest font-semibold text-blue-700 mb-4">Simple & Effective</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              How to Get Started
+            </h2>
+            <p className="text-gray-600 text-lg max-w-xl mx-auto">
+              Three simple steps to a sharper, more vibrant mind.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "01",
+                title: "Visit the Official Page",
+                desc: "Click our link to access the official Advanced Memory product page with the full Nobel Prize research story.",
+                icon: ArrowRight,
+              },
+              {
+                step: "02",
+                title: "Choose Your Supply",
+                desc: "Select your preferred package. Multi-bottle options offer the best value and ensure you complete a full course.",
+                icon: Shield,
+              },
+              {
+                step: "03",
+                title: "Experience the Difference",
+                desc: "Take as directed and notice improvements in recall, focus, and mental clarity within weeks.",
+                icon: Brain,
+              },
+            ].map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.step} className="text-center">
+                  <div className="relative inline-block mb-6">
+                    <div className="w-20 h-20 bg-blue-700 rounded-full flex items-center justify-center mx-auto">
+                      <Icon className="text-white" size={32} />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center text-xs font-bold text-gray-900">
+                      {step.step}
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{step.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-20 md:py-28 bg-gray-50">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-xs uppercase tracking-widest font-semibold text-blue-700 mb-4">Got Questions?</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+          </div>
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <div key={i} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                <button
+                  className="w-full text-left px-8 py-6 flex items-center justify-between gap-4 font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  aria-expanded={openFaq === i}
+                >
+                  <span>{faq.q}</span>
+                  <ChevronDown
+                    size={20}
+                    className={`shrink-0 text-blue-700 transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {openFaq === i && (
+                  <div className="px-8 pb-6 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section
+        ref={ctaRef}
+        className="relative py-24 md:py-32 overflow-hidden"
+      >
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1600&h=800&fit=crop"
+            alt="Brain health"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 via-blue-900/90 to-gray-900/95" />
+        </div>
+        <div
+          className={`relative max-w-4xl mx-auto px-6 text-center transition-all duration-1000 ${ctaInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        >
+          <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs uppercase tracking-widest font-semibold px-4 py-2 rounded-full mb-8">
+            <Award size={14} />
+            Nobel Prize–Winning Formula
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            Your Sharpest Mind Is{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+              Waiting for You
+            </span>
+          </h2>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Join over 50,000 people who have already discovered the power of Advanced Memory. Don't let another day pass with a foggy mind — reclaim your clarity today.
+          </p>
+          <a
+            href={AFFILIATE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-12 py-5 rounded-full text-xl font-bold hover:shadow-2xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300 mb-6"
+          >
+            Claim Your Advanced Memory Now <ArrowRight size={24} />
+          </a>
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400 mt-4">
+            <span className="flex items-center gap-2"><Shield size={16} className="text-green-400" /> Satisfaction Guaranteed</span>
+            <span className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> Natural Ingredients</span>
+            <span className="flex items-center gap-2"><Users size={16} className="text-green-400" /> 50,000+ Happy Customers</span>
+          </div>
+          <p className="text-gray-500 text-xs mt-8 max-w-xl mx-auto">
+            * Affiliate disclosure: This page contains affiliate links. We may earn a commission if you purchase through our link at no additional cost to you. Individual results may vary.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
